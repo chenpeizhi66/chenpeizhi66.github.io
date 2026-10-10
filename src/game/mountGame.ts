@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { isPanelOpen, openPanel } from '../dialog.ts';
-import { bindHold, queueInteract } from './controls.ts';
+import { bindHold, queueInteract, queueJump } from './controls.ts';
 import { JourneyScene } from './JourneyScene.ts';
 import { VIEW_H, VIEW_W } from './level.ts';
 
@@ -33,7 +33,7 @@ export function mountGame(): void {
       physics: {
         default: 'arcade',
         arcade: {
-          gravity: { x: 0, y: 860 },
+          gravity: { x: 0, y: 450 },
           debug: false,
         },
       },
@@ -53,7 +53,29 @@ export function mountGame(): void {
   }
 
   viewport.tabIndex = 0;
-  viewport.addEventListener('pointerdown', () => viewport.focus());
+  let pointerInside = false;
+  const armKeys = () => {
+    pointerInside = true;
+    viewport.focus();
+  };
+  viewport.addEventListener('pointerdown', armKeys);
+  viewport.addEventListener('pointerenter', armKeys);
+  viewport.addEventListener('pointerleave', () => {
+    pointerInside = false;
+  });
+  window.addEventListener('keydown', (event) => {
+    if (isPanelOpen()) return;
+    const focused = document.activeElement === viewport || viewport.contains(document.activeElement);
+    if (!focused && !pointerInside) return;
+    if (event.key === ' ' || event.key === 'ArrowUp' || event.key === 'w' || event.key === 'W') {
+      event.preventDefault();
+      queueJump();
+    }
+    if (event.key === 'e' || event.key === 'E' || event.key === 'Enter') {
+      event.preventDefault();
+      queueInteract();
+    }
+  });
 
   const pauseOverlay = document.querySelector<HTMLElement>('#pause-overlay');
   const showPause = (paused: boolean) => {
@@ -84,7 +106,10 @@ export function mountGame(): void {
   const read = document.querySelector<HTMLButtonElement>('[data-control="read"]');
   if (left) bindHold(left, 'left');
   if (right) bindHold(right, 'right');
-  if (jump) bindHold(jump, 'jump');
+  jump?.addEventListener('pointerdown', (event) => {
+    event.preventDefault();
+    queueJump();
+  });
   read?.addEventListener('pointerdown', (event) => {
     event.preventDefault();
     queueInteract();

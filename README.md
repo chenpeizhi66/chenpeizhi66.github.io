@@ -64,7 +64,7 @@ Pin positions use the same equirectangular projection as that file.
 
 ## Game
 
-Phaser 4 draws one side-scrolling scene: Dalian, the CRRC internship, Carnegie Mellon, and software projects. Move with A/D or the arrows, jump with Space, W, or up, and read a marker with E or Enter. Esc pauses. Restart puts the character back at the start. Touch buttons show on phones and narrow windows.
+Phaser 4 draws one side-scrolling scene: Dalian, the CRRC internship, Carnegie Mellon, and software projects. Move with A/D or the arrows, jump with Space, W, or up, and read a marker with E or Enter. Esc pauses. Restart puts the character back at the start. Left, Right, Jump, and Read buttons sit under the scene so the same walk works on a phone.
 
 Pixel art in `src/game/art.ts` is original. There is no audio.
 

@@ -153,6 +153,7 @@ export function renderPage(root: HTMLElement): void {
                 <button type="button" id="resume-button">Resume</button>
               </div>
             </div>
+            <p id="interact-hint" class="interact-hint" role="status"></p>
             <div class="touch-controls" aria-label="Touch controls">
               <button type="button" data-control="left" aria-pressed="false">Left</button>
               <button type="button" data-control="right" aria-pressed="false">Right</button>

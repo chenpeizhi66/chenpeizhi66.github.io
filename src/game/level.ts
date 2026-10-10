@@ -16,9 +16,9 @@ export type Rect = {
 
 export const platforms: Rect[] = [
   { x: 0, y: GROUND_Y, w: WORLD_W, h: WORLD_H - GROUND_Y },
-  { x: 18 * TILE, y: GROUND_Y - 3 * TILE, w: 4 * TILE, h: TILE },
-  { x: 46 * TILE, y: GROUND_Y - 3 * TILE, w: 5 * TILE, h: TILE },
-  { x: 72 * TILE, y: GROUND_Y - 3 * TILE, w: 4 * TILE, h: TILE },
+  { x: 18 * TILE, y: GROUND_Y - 4 * TILE, w: 4 * TILE, h: TILE },
+  { x: 46 * TILE, y: GROUND_Y - 4 * TILE, w: 5 * TILE, h: TILE },
+  { x: 72 * TILE, y: GROUND_Y - 4 * TILE, w: 4 * TILE, h: TILE },
 ];
 
 export type Scenery = {

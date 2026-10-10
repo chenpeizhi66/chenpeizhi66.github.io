@@ -140,13 +140,14 @@ function paintPixels(
   ctx: CanvasRenderingContext2D,
   rows: readonly string[],
   colors: Record<string, string>,
+  scale = 1,
 ): void {
   rows.forEach((row, y) => {
     [...row].forEach((pixel, x) => {
       const color = colors[pixel];
       if (!color) return;
       ctx.fillStyle = color;
-      ctx.fillRect(x, y, 1, 1);
+      ctx.fillRect(x * scale, y * scale, scale, scale);
     });
   });
 }
@@ -207,10 +208,15 @@ export function drawWorld(ctx: CanvasRenderingContext2D): void {
   ctx.fillRect(0, 0, WORLD_W, WORLD_H);
   ctx.fillStyle = '#f4fafc';
   ctx.fillRect(0, 0, WORLD_W, 36);
-  ctx.fillStyle = '#d7e7d6';
+  ctx.fillStyle = '#e4f0e0';
   for (let x = 0; x < WORLD_W; x += 1) {
-    const hill = 46 + Math.round(10 * Math.sin(x / 48) + 6 * Math.sin(x / 19));
-    ctx.fillRect(x, 78 - hill, 1, hill);
+    const hill = 78 + Math.round(16 * Math.sin(x / 54) + 8 * Math.sin(x / 23));
+    ctx.fillRect(x, 176 - hill, 1, hill);
+  }
+  ctx.fillStyle = '#d5e6d1';
+  for (let x = 0; x < WORLD_W; x += 1) {
+    const hill = 42 + Math.round(10 * Math.sin(x / 33));
+    ctx.fillRect(x, 132 - hill, 1, hill);
   }
 
   for (const x of trees) drawTree(ctx, x);
@@ -342,16 +348,16 @@ const iconColors: Record<string, string> = {
 
 export function drawIcons(scene: Phaser.Scene): void {
   for (const [key, rows] of Object.entries(iconRows)) {
-    paintTexture(scene, `icon-${key}`, 16, 16, (ctx) => {
-      paintPixels(ctx, rows, iconColors);
+    paintTexture(scene, `icon-${key}`, 32, 32, (ctx) => {
+      paintPixels(ctx, rows, iconColors, 2);
     });
   }
 }
 
 export function drawPlayer(scene: Phaser.Scene): void {
   for (const [key, rows] of Object.entries(playerFrames)) {
-    paintTexture(scene, key, 16, 24, (ctx) => {
-      paintPixels(ctx, rows, palette);
+    paintTexture(scene, key, 32, 48, (ctx) => {
+      paintPixels(ctx, rows, palette, 2);
     });
   }
 

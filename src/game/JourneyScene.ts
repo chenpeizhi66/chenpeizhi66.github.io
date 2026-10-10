@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { consumeInteract, held } from './controls.ts';
+import { consumeInteract, consumeJump, held } from './controls.ts';
 import { drawIcons, drawPlayer, drawWorld, paintTexture } from './art.ts';
 import {
   GROUND_Y,
@@ -33,6 +33,7 @@ export class JourneyScene extends Phaser.Scene {
   private nearest: string | null = null;
   private touchJumpHeld = false;
   private groundedAt = 0;
+  private showJumpUntil = 0;
   private capturing = false;
   private manuallyPaused = false;
   private reduceMotion = false;
@@ -62,8 +63,8 @@ export class JourneyScene extends Phaser.Scene {
 
     this.player = this.physics.add.sprite(SPAWN_X, GROUND_Y, 'idle0').setOrigin(0.5, 1).setDepth(5);
     const body = this.player.body as Phaser.Physics.Arcade.Body;
-    body.setSize(10, 20);
-    body.setOffset(3, 4);
+    body.setSize(16, 36);
+    body.setOffset(8, 12);
     body.setCollideWorldBounds(true);
     this.player.anims.play('idle');
 
@@ -86,10 +87,9 @@ export class JourneyScene extends Phaser.Scene {
     this.physics.world.setBounds(0, 0, WORLD_W, WORLD_H);
 
     for (const marker of markers) {
-      const icon = this.add.image(marker.x, GROUND_Y, `icon-${marker.icon}`).setOrigin(0.5, 1).setDepth(6);
-      icon.setData('id', marker.id);
+      this.add.image(marker.x, GROUND_Y, `icon-${marker.icon}`).setOrigin(0.5, 1).setDepth(6);
       this.add
-        .text(marker.x, GROUND_Y - 34, marker.label, {
+        .text(marker.x, GROUND_Y - 40, marker.label, {
           fontFamily: 'ui-monospace, monospace',
           fontSize: '8px',
           color: '#1c1c1c',
@@ -98,10 +98,13 @@ export class JourneyScene extends Phaser.Scene {
         })
         .setOrigin(0.5, 1)
         .setDepth(7);
+      const zone = this.add.zone(marker.x, GROUND_Y - 20, 72, 56);
+      zone.setInteractive({ useHandCursor: true });
+      zone.on('pointerdown', () => this.hooks.onCheckpoint(marker.id));
     }
 
     this.prompt = this.add
-      .text(0, 0, 'E  read', {
+      .text(0, 0, 'Press E', {
         fontFamily: 'ui-monospace, monospace',
         fontSize: '8px',
         color: '#ffffff',
@@ -113,11 +116,14 @@ export class JourneyScene extends Phaser.Scene {
       .setVisible(false);
 
     this.add
-      .text(24, GROUND_Y - 52, 'Walk right', {
+      .text(SPAWN_X, 96, 'Walk right', {
         fontFamily: 'ui-monospace, monospace',
         fontSize: '8px',
         color: '#1c1c1c',
+        backgroundColor: '#ffffff',
+        padding: { x: 2, y: 1 },
       })
+      .setOrigin(0, 0)
       .setDepth(4);
 
     const keyboard = this.input.keyboard;
@@ -202,7 +208,13 @@ export class JourneyScene extends Phaser.Scene {
         Phaser.Input.Keyboard.JustDown(this.keyW));
     const touchJump = held.jump && !this.touchJumpHeld;
     this.touchJumpHeld = held.jump;
-    if ((keyboardJump || touchJump) && canJump) body.setVelocityY(-305);
+    const queuedJump = consumeJump();
+    if ((keyboardJump || touchJump || queuedJump) && canJump) {
+      this.groundedAt = 0;
+      this.showJumpUntil = this.time.now + 700;
+      body.y -= 14;
+      body.setVelocityY(-300);
+    }
 
     const speed = Math.abs(body.velocity.x);
     if (!onGround) this.player.anims.play('jump', true);
@@ -211,22 +223,25 @@ export class JourneyScene extends Phaser.Scene {
     if (this.player.anims.isPaused) this.player.anims.resume();
 
     this.nearest = null;
-    let best = 34;
+    let best = 120;
     for (const marker of markers) {
       const distance = Math.abs(this.player.x - marker.x);
-      if (distance < best && Math.abs(this.player.y - GROUND_Y) < 36) {
+      if (distance < best && this.player.y > GROUND_Y - 110) {
         best = distance;
         this.nearest = marker.id;
       }
     }
 
+    const hint = document.getElementById('interact-hint');
     if (this.nearest) {
       const marker = markers.find((item) => item.id === this.nearest);
       if (marker) {
-        this.prompt.setPosition(marker.x, GROUND_Y - 46).setVisible(true);
+        this.prompt.setPosition(marker.x, GROUND_Y - 52).setVisible(true);
+        if (hint) hint.textContent = `${marker.label}. Press E, Enter, or Read.`;
       }
     } else {
       this.prompt.setVisible(false);
+      if (hint) hint.textContent = this.time.now < this.showJumpUntil ? 'Jump' : '';
     }
 
     const interact =

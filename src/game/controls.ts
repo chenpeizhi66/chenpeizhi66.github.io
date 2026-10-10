@@ -5,9 +5,20 @@ export const held = {
 };
 
 let interactQueued = false;
+let jumpQueued = false;
 
 export function queueInteract(): void {
   interactQueued = true;
+}
+
+export function queueJump(): void {
+  jumpQueued = true;
+}
+
+export function consumeJump(): boolean {
+  const queued = jumpQueued;
+  jumpQueued = false;
+  return queued;
 }
 
 export function consumeInteract(): boolean {
@@ -17,14 +28,19 @@ export function consumeInteract(): boolean {
 }
 
 export function bindHold(button: HTMLButtonElement, key: 'left' | 'right' | 'jump'): void {
+  let releaseTimer = 0;
   const press = (event: PointerEvent) => {
     event.preventDefault();
+    window.clearTimeout(releaseTimer);
     held[key] = true;
     button.setAttribute('aria-pressed', 'true');
   };
   const release = () => {
-    held[key] = false;
-    button.setAttribute('aria-pressed', 'false');
+    window.clearTimeout(releaseTimer);
+    releaseTimer = window.setTimeout(() => {
+      held[key] = false;
+      button.setAttribute('aria-pressed', 'false');
+    }, 180);
   };
   button.addEventListener('pointerdown', press);
   button.addEventListener('pointerup', release);

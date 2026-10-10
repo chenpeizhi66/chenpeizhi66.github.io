@@ -77,5 +77,6 @@ export function openPanel(id: string): void {
 
   returnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
   if (!dialog.open) dialog.showModal();
-  closeButton?.focus();
+  dialog.querySelector('article')?.scrollTo(0, 0);
+  closeButton?.focus({ preventScroll: true });
 }
