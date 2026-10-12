@@ -1,5 +1,5 @@
-import type Phaser from 'phaser';
-import { GROUND_Y, platforms, scenery, trees, WORLD_H, WORLD_W } from './level.ts';
+import Phaser from 'phaser';
+import { drawPixelText, pixelTextSize } from './pixelFont.ts';
 
 const palette: Record<string, string> = {
   h: '#2a211c',
@@ -168,99 +168,28 @@ export function paintTexture(
   ctx.clearRect(0, 0, width, height);
   draw(ctx);
   texture.refresh();
+  scene.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST);
 }
 
-function drawBuilding(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  w: number,
-  h: number,
-  roof: string,
+
+export function drawLabel(
+  scene: Phaser.Scene,
+  key: string,
+  text: string,
+  foreground: string,
+  background: string,
+  scale = 2,
 ): void {
-  const top = GROUND_Y - h;
-  ctx.fillStyle = '#f7f5f1';
-  ctx.fillRect(x, top, w, h);
-  ctx.fillStyle = '#dedad3';
-  ctx.fillRect(x, top, 3, h);
-  ctx.fillStyle = roof;
-  ctx.fillRect(x - 4, top - 5, w + 8, 5);
-  ctx.fillRect(x + 10, top - 9, w - 20, 4);
-  ctx.fillStyle = '#9ec3d4';
-  for (let wx = x + 8; wx < x + w - 10; wx += 12) {
-    ctx.fillRect(wx, top + 10, 6, 7);
-    if (h > 56) ctx.fillRect(wx, top + 24, 6, 7);
-  }
-  ctx.fillStyle = '#3a342e';
-  ctx.fillRect(x + Math.floor(w / 2) - 5, GROUND_Y - 16, 10, 16);
-}
-
-function drawTree(ctx: CanvasRenderingContext2D, x: number): void {
-  ctx.fillStyle = '#6d4c34';
-  ctx.fillRect(x + 5, GROUND_Y - 14, 3, 14);
-  ctx.fillStyle = '#5e7c4c';
-  ctx.fillRect(x, GROUND_Y - 30, 14, 18);
-  ctx.fillStyle = '#73915d';
-  ctx.fillRect(x + 2, GROUND_Y - 34, 10, 8);
-}
-
-export function drawWorld(ctx: CanvasRenderingContext2D): void {
-  ctx.fillStyle = '#e7f3f8';
-  ctx.fillRect(0, 0, WORLD_W, WORLD_H);
-  ctx.fillStyle = '#f4fafc';
-  ctx.fillRect(0, 0, WORLD_W, 36);
-  ctx.fillStyle = '#e4f0e0';
-  for (let x = 0; x < WORLD_W; x += 1) {
-    const hill = 78 + Math.round(16 * Math.sin(x / 54) + 8 * Math.sin(x / 23));
-    ctx.fillRect(x, 176 - hill, 1, hill);
-  }
-  ctx.fillStyle = '#d5e6d1';
-  for (let x = 0; x < WORLD_W; x += 1) {
-    const hill = 42 + Math.round(10 * Math.sin(x / 33));
-    ctx.fillRect(x, 132 - hill, 1, hill);
-  }
-
-  for (const x of trees) drawTree(ctx, x);
-
-  for (const piece of scenery) {
-    if (piece.kind === 'school') drawBuilding(ctx, piece.x, piece.w, piece.h, '#6d4e3d');
-    if (piece.kind === 'workshop') {
-      drawBuilding(ctx, piece.x, piece.w, piece.h, '#5e666c');
-      ctx.fillStyle = '#5e666c';
-      ctx.fillRect(piece.x + 18, GROUND_Y - piece.h - 22, 8, 18);
-      ctx.fillRect(piece.x + 14, GROUND_Y - piece.h - 26, 16, 4);
-    }
-    if (piece.kind === 'lab') drawBuilding(ctx, piece.x, piece.w, piece.h, '#31445c');
-    if (piece.kind === 'desk') {
-      ctx.fillStyle = '#d7d2c8';
-      ctx.fillRect(piece.x, GROUND_Y - 8, piece.w, 8);
-      ctx.fillStyle = '#24344a';
-      ctx.fillRect(piece.x + 10, GROUND_Y - 28, 16, 12);
-      ctx.fillRect(piece.x + 40, GROUND_Y - 32, 16, 16);
-      ctx.fillRect(piece.x + 70, GROUND_Y - 26, 16, 10);
-      ctx.fillStyle = '#b7d4e4';
-      ctx.fillRect(piece.x + 12, GROUND_Y - 26, 12, 8);
-      ctx.fillRect(piece.x + 42, GROUND_Y - 30, 12, 12);
-      ctx.fillRect(piece.x + 72, GROUND_Y - 24, 12, 6);
-    }
-  }
-
-  ctx.fillStyle = '#8d6d49';
-  ctx.fillRect(0, GROUND_Y + 4, WORLD_W, WORLD_H - GROUND_Y - 4);
-  ctx.fillStyle = '#6f8f5b';
-  ctx.fillRect(0, GROUND_Y, WORLD_W, 4);
-  ctx.fillStyle = '#5d7a4b';
-  for (let x = 0; x < WORLD_W; x += 5) {
-    ctx.fillRect(x, GROUND_Y - 2, 1, 2);
-  }
-
-  for (const platform of platforms.slice(1)) {
-    ctx.fillStyle = '#d9d4c8';
-    ctx.fillRect(platform.x, platform.y, platform.w, platform.h);
-    ctx.fillStyle = '#6f8f5b';
-    ctx.fillRect(platform.x, platform.y, platform.w, 3);
-    ctx.fillStyle = '#b7b1a4';
-    ctx.fillRect(platform.x, platform.y + platform.h - 2, platform.w, 2);
-  }
+  const textSize = pixelTextSize(text, scale);
+  const width = textSize.width + 10;
+  const height = textSize.height + 8;
+  paintTexture(scene, key, width, height, (ctx) => {
+    ctx.fillStyle = '#1c1c1c';
+    ctx.fillRect(0, 0, width, height);
+    ctx.fillStyle = background;
+    ctx.fillRect(1, 1, width - 2, height - 2);
+    drawPixelText(ctx, text, 5, 4, foreground, scale);
+  });
 }
 
 const iconRows: Record<string, string[]> = {

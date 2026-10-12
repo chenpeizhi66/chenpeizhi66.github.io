@@ -1,5 +1,5 @@
 export const TILE = 16;
-export const COLS = 100;
+export const COLS = 200;
 export const ROWS = 15;
 export const VIEW_W = 400;
 export const VIEW_H = ROWS * TILE;
@@ -15,24 +15,10 @@ export type Rect = {
 };
 
 export const platforms: Rect[] = [
-  { x: 0, y: GROUND_Y, w: WORLD_W, h: WORLD_H - GROUND_Y },
-  { x: 18 * TILE, y: GROUND_Y - 4 * TILE, w: 4 * TILE, h: TILE },
-  { x: 46 * TILE, y: GROUND_Y - 4 * TILE, w: 5 * TILE, h: TILE },
-  { x: 72 * TILE, y: GROUND_Y - 4 * TILE, w: 4 * TILE, h: TILE },
-];
-
-export type Scenery = {
-  x: number;
-  w: number;
-  h: number;
-  kind: 'school' | 'workshop' | 'lab' | 'desk';
-};
-
-export const scenery: Scenery[] = [
-  { x: 48, w: 112, h: 70, kind: 'school' },
-  { x: 400, w: 148, h: 52, kind: 'workshop' },
-  { x: 780, w: 124, h: 86, kind: 'lab' },
-  { x: 1188, w: 96, h: 40, kind: 'desk' },
+  { x: -48, y: GROUND_Y, w: WORLD_W + 96, h: WORLD_H - GROUND_Y },
+  { x: 360, y: GROUND_Y - 5 * TILE, w: 4 * TILE, h: TILE },
+  { x: 1288, y: GROUND_Y - 5 * TILE, w: 4 * TILE, h: TILE },
+  { x: 2768, y: GROUND_Y - 5 * TILE, w: 4 * TILE, h: TILE },
 ];
 
 export type MarkerIcon = 'book' | 'gear' | 'screen' | 'laptop';
@@ -45,12 +31,10 @@ export type Marker = {
 };
 
 export const markers: Marker[] = [
-  { id: 'dalian', x: 210, label: 'Dalian', icon: 'book' },
-  { id: 'nio', x: 600, label: 'NIO', icon: 'gear' },
-  { id: 'cmu', x: 960, label: 'CMU', icon: 'screen' },
-  { id: 'software', x: 1340, label: 'Code', icon: 'laptop' },
+  { id: 'dalian', x: 520, label: 'Dalian', icon: 'book' },
+  { id: 'nio', x: 1080, label: 'NIO', icon: 'gear' },
+  { id: 'cmu', x: 2004, label: 'CMU', icon: 'screen' },
+  { id: 'software', x: 2460, label: 'Code', icon: 'laptop' },
 ];
 
-export const trees = [28, 250, 700, 1120, 1500];
-
-export const SPAWN_X = 56;
+export const SPAWN_X = 220;

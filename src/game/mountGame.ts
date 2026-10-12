@@ -22,7 +22,7 @@ export function mountGame(): void {
   let game: Phaser.Game;
   try {
     game = new Phaser.Game({
-      type: Phaser.AUTO,
+      type: Phaser.CANVAS,
       parent: viewport,
       width: VIEW_W,
       height: VIEW_H,
@@ -30,6 +30,11 @@ export function mountGame(): void {
       pixelArt: true,
       banner: false,
       audio: { noAudio: true },
+      render: {
+        pixelArt: true,
+        antialias: false,
+        roundPixels: true,
+      },
       physics: {
         default: 'arcade',
         arcade: {
@@ -38,8 +43,9 @@ export function mountGame(): void {
         },
       },
       scale: {
-        mode: Phaser.Scale.FIT,
+        mode: Phaser.Scale.NONE,
         autoCenter: Phaser.Scale.CENTER_BOTH,
+        zoom: 1,
       },
       scene,
     });
@@ -126,9 +132,33 @@ export function mountGame(): void {
   const section = document.querySelector('#journey');
   if (section) watcher.observe(section);
 
+  let fitting = false;
+  const fitCrisp = () => {
+    if (fitting) return;
+    const width = viewport.clientWidth;
+    const height = viewport.clientHeight;
+    if (width < 16 || height < 16) return;
+    fitting = true;
+    const zoom = Math.min(Math.floor(width / VIEW_W), Math.floor(height / VIEW_H));
+    const scale = game.scale;
+    if (zoom >= 1) {
+      const changed = scale.scaleMode !== Phaser.Scale.NONE || scale.zoom !== zoom;
+      scale.scaleMode = Phaser.Scale.NONE;
+      if (changed) scale.setZoom(zoom);
+    } else if (scale.scaleMode !== Phaser.Scale.FIT || scale.zoom !== 1) {
+      scale.scaleMode = Phaser.Scale.FIT;
+      scale.setZoom(1);
+    } else {
+      scale.refresh();
+    }
+    game.canvas.style.imageRendering = 'pixelated';
+    fitting = false;
+  };
+  new ResizeObserver(fitCrisp).observe(viewport);
   game.events.once(Phaser.Core.Events.READY, () => {
     viewport.classList.add('is-ready');
     status.textContent = 'Click the scene, then use the keyboard. On a phone, use the buttons underneath.';
+    fitCrisp();
   });
 
   if (import.meta.hot) {

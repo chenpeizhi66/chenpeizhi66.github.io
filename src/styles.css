@@ -265,8 +265,8 @@ button:hover {
 }
 
 .game-viewport canvas {
+  image-rendering: -webkit-optimize-contrast;
   image-rendering: pixelated;
-  image-rendering: crisp-edges;
 }
 
 .pause-overlay {
