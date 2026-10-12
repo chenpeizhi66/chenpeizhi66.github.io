@@ -39,6 +39,7 @@ export const projects: Project[] = [
     summary:
       'Localized window frames in a warehouse LiDAR scan, about 85% detection accuracy, using RANSAC, DBSCAN, and PointNet++.',
     technologies: ['LiDAR', 'RANSAC', 'DBSCAN', 'PointNet++'],
+    url: 'https://github.com/chenpeizhi66/warehouse-lidar-perception',
     listed: true,
   },
   {

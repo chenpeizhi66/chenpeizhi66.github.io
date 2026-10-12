@@ -49,7 +49,7 @@ If the site instead lives at `https://chenpeizhi66.github.io/REPOSITORY/`, chang
 
 ## Visitor count
 
-The map section asks `https://tally.yuki.sh` for a count. Unique visitors are distinct IP addresses. Page views count openings. One browser tab counts once per session.
+The map section asks `https://tally.yuki.sh` for unique visitors and page views. If that host does not answer within a few seconds, the page uses `https://abacus.jasoncameron.dev` for a page-view count instead. One browser tab counts once per session.
 
 The site has no server of its own, so the number has to live somewhere else. To turn the counter off, remove the `loadVisitors` call in `src/main.ts`.
 

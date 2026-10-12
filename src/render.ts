@@ -1,4 +1,4 @@
-import { education, profile } from './content/profile.ts';
+import { profile } from './content/profile.ts';
 import { listedProjects } from './content/projects.ts';
 import { industry, research } from './content/resume.ts';
 import { panels } from './content/panels.ts';
@@ -25,18 +25,6 @@ function externalAttrs(url: string): string {
 
 export function renderPage(root: HTMLElement): void {
   const base = import.meta.env.BASE_URL;
-  const facts = (items: typeof education) =>
-    items
-      .map(
-        (item) => `
-          <li>
-            <p class="when">${esc(item.when)}</p>
-            <h3>${esc(item.title)}</h3>
-            <p class="where">${esc(item.place)}</p>
-            <p>${esc(item.summary)}</p>
-          </li>`,
-      )
-      .join('');
 
   const projectCard = (project: {
     title: string;
@@ -137,10 +125,6 @@ export function renderPage(root: HTMLElement): void {
         <section id="about">
           <h2>About</h2>
           ${profile.paragraphs.map((paragraph) => `<p>${esc(paragraph)}</p>`).join('')}
-          <h3>Education</h3>
-          <ul class="facts">${facts(education)}</ul>
-          <h3>Skills</h3>
-          <p class="skills">${esc(profile.skills.join(', '))}.</p>
         </section>
 
         <section id="experience">
