@@ -1,7 +1,7 @@
 import { education, profile, work } from './content/profile.ts';
 import { projects } from './content/projects.ts';
 import { panels } from './content/panels.ts';
-import { pinPercent, places } from './content/places.ts';
+import { places, separatePins } from './content/places.ts';
 import { openPanel } from './dialog.ts';
 
 function esc(value: string): string {
@@ -49,32 +49,18 @@ export function renderPage(root: HTMLElement): void {
     })
     .join('');
 
-  const pins = places
-    .map((place) => {
-      const point = pinPercent(place);
-      const flip = point.left > 70 ? ' flip' : '';
+  const pins = separatePins(places)
+    .map(({ place, left, top }) => {
       return `
         <button
           type="button"
-          class="pin${flip}"
-          style="left:${point.left.toFixed(3)}%;top:${point.top.toFixed(3)}%"
-          data-place="${esc(place.id)}"
-          aria-label="${esc(`${place.name}. ${place.note}`)}"
+          class="pin"
+          style="left:${left.toFixed(3)}%;top:${top.toFixed(3)}%"
+          aria-label="${esc(place.name)}"
         >
-          <span class="dot" aria-hidden="true"></span>
           <span class="pin-name">${esc(place.name)}</span>
         </button>`;
     })
-    .join('');
-
-  const placeList = places
-    .map(
-      (place) => `
-        <li id="place-${esc(place.id)}">
-          <strong>${esc(place.name)}</strong>
-          <span>${esc(place.note)}</span>
-        </li>`,
-    )
     .join('');
 
   const chapters = panels
@@ -167,12 +153,11 @@ export function renderPage(root: HTMLElement): void {
 
         <section id="map">
           <h2>Places</h2>
-          <p>Where I studied. The count below is how many people have opened this page.</p>
+          <p>Cities I have visited. Rest the pointer on a red dot to see the name. The count below is how many people have opened this page.</p>
           <div class="map-frame">
-            <img src="${esc(base)}assets/world.svg" alt="World map" width="960" height="480" />
+            <img src="${esc(base)}assets/world.svg" alt="World map of cities visited" width="960" height="480" />
             <div class="pins">${pins}</div>
           </div>
-          <ul class="places">${placeList}</ul>
           <div id="visitors" class="visitors" aria-live="polite">
             <p>Checking how many people have opened this page…</p>
           </div>
@@ -190,13 +175,4 @@ export function renderPage(root: HTMLElement): void {
     button.addEventListener('click', () => openPanel(button.dataset.panel ?? ''));
   });
 
-  root.querySelectorAll<HTMLButtonElement>('[data-place]').forEach((button) => {
-    button.addEventListener('click', () => {
-      const id = button.dataset.place;
-      root.querySelectorAll('.places li').forEach((item) => item.classList.remove('is-current'));
-      const item = id ? document.getElementById(`place-${id}`) : null;
-      item?.classList.add('is-current');
-      item?.scrollIntoView({ block: 'nearest' });
-    });
-  });
 }

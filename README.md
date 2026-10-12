@@ -1,6 +1,6 @@
 # Peizhi Chen
 
-A quiet personal site: who I am, previous projects, a small pixel-art walk through that story, and a map of where I studied plus a visitor count.
+A quiet personal site: who I am, previous projects, a small pixel-art walk through that story, and a map of cities visited plus a visitor count.
 
 The page is white and meant to be read. The game sits in the page. It is not a full-screen game you have to finish before the résumé is available.
 
@@ -11,7 +11,7 @@ The page is white and meant to be read. The game sits in the page. It is not a f
 | `src/content/profile.ts` | Name, bio, education, work, skills, links |
 | `src/content/projects.ts` | Project cards |
 | `src/content/panels.ts` | Chapters that open from the pixel walk |
-| `src/content/places.ts` | Map pins. Add a city with `lat` and `lng` |
+| `src/content/places.ts` | Visited cities. Add a city with `lat` and `lng`. Names stay hidden until hover |
 
 The copy on the site comes from the public homepage, CV page, and original GitHub repositories under [chenpeizhi66](https://github.com/chenpeizhi66). It does not invent degrees, jobs, or travel.
 
@@ -74,6 +74,6 @@ Pixel art in `src/game/art.ts` is original. There is no audio.
 - The character walks, jumps, and does not fall through the ground.
 - Each of the four markers opens a chapter, and the chapter buttons do the same.
 - Pause, Esc, and Restart work.
-- The map shows Dalian and Pittsburgh.
+- The map shows a red dot for each visited city, and the city name appears on hover.
 - The visitor line shows a number, or a clear unavailable message if the counter is down.
 - `npm run typecheck` and `npm run build` succeed.
