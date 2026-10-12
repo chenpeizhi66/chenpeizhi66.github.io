@@ -34,17 +34,17 @@ npm run preview
 
 ## Publish on GitHub Pages
 
-For a personal site at `https://USERNAME.github.io/`:
+`https://chenpeizhi66.github.io/` is the account site. GitHub only serves that address from a public repository named exactly `chenpeizhi66.github.io`. A repository with any other name, including `peizhichen.github.io`, is a project site and is served at `https://chenpeizhi66.github.io/<repository>/`.
 
-1. Create a public repository named `USERNAME.github.io`.
-2. Push this project to the `main` branch.
-3. In the repository, open Settings → Pages.
-4. Under Build and deployment, choose **GitHub Actions**.
-5. The workflow in `.github/workflows/deploy.yml` builds `dist/` and publishes it.
+1. On GitHub, signed in as **chenpeizhi66**, create a **public** repository named `chenpeizhi66.github.io`. Leave it empty: no README, no .gitignore, no license.
+2. Push this project’s `main` branch to that repository.
+3. Open the new repository → **Settings** → **Pages**.
+4. Under **Build and deployment**, set **Source** to **GitHub Actions**. The workflow already in `.github/workflows/deploy.yml` builds `dist/` and publishes it. Skip GitHub’s starter templates.
+5. Open the **Actions** tab and wait until “Deploy site to GitHub Pages” succeeds. The first deploy can take a few minutes. Then open `https://chenpeizhi66.github.io/`.
 
 `vite.config.ts` uses `base: '/'` for that user-site URL.
 
-If the site instead lives at `https://USERNAME.github.io/REPOSITORY/`, change `base` to `'/REPOSITORY/'` and change the home link in `public/404.html` to `/REPOSITORY/`.
+If the site instead lives at `https://chenpeizhi66.github.io/REPOSITORY/`, change `base` to `'/REPOSITORY/'` and change the home link in `public/404.html` to `/REPOSITORY/`.
 
 ## Visitor count
 
