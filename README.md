@@ -9,7 +9,8 @@ The page is white and meant to be read. The game sits in the page. It is not a f
 | File | What it changes |
 | --- | --- |
 | `src/content/profile.ts` | Name, bio, education, work, skills, links |
-| `src/content/projects.ts` | Project cards |
+| `src/content/projects.ts` | Project cards. Only entries with `listed: true` appear in Projects |
+| `src/content/resume.ts` | Research and résumé projects |
 | `src/content/panels.ts` | Chapters that open from the pixel walk |
 | `src/content/places.ts` | Visited cities. Add a city with `lat` and `lng`. Names stay hidden until hover |
 
