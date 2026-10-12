@@ -34,7 +34,7 @@ export const industry: ExperienceItem[] = [
     summary:
       'Built Nxperf, an NPU profiler that traces operator execution down to hardware scheduling, and sped up CVA operators in CUDA by up to 40%.',
     technologies: ['CUDA', 'LTTng', 'C++'],
-    url: 'https://github.com/chenpeizhi66/nio-nxperf',
+    url: 'https://github.com/chenpeizhi66/system-profiling-tools',
   },
   {
     title: 'Software engineer, RDK',
@@ -42,6 +42,6 @@ export const industry: ExperienceItem[] = [
     summary:
       'Built the camera and perception stack in NIO’s Robot Development Kit as ROS 2 nodes, with a gRPC control plane and a vision-language-action model on the same chip.',
     technologies: ['ROS 2', 'gRPC', 'Protobuf', 'C++'],
-    url: 'https://github.com/chenpeizhi66/nio-rdk',
+    url: 'https://github.com/chenpeizhi66/robot-development-kit',
   },
 ];
