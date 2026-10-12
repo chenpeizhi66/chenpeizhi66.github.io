@@ -1,53 +1,43 @@
-export type ResumeProject = {
+export type ExperienceItem = {
   title: string;
-  place: string;
+  meta: string;
   summary: string;
   technologies: string[];
   url?: string;
 };
 
-/** Research entry from the public CV. CERLAB, Pittsburgh. */
-export const research = [
+/** Research Experience on the latest CV. The warehouse LiDAR item is shown under Projects. */
+export const research: ExperienceItem[] = [
   {
-    when: 'CERLAB',
-    title: 'Distributed Linux performance analysis and monitoring',
-    place: 'Pittsburgh, PA',
+    title: 'UAV autonomous navigation',
+    meta: 'Carnegie Mellon University · Pittsburgh',
     summary:
-      'Built the monitor with Docker, CMake, gRPC, and protobuf. A factory constructs the monitor interfaces for CPU status, system load, soft interrupts, memory, and network. The gRPC server runs on the machine being watched, and the client library is called by the monitor and display modules. The Qt display uses QWidget, QTableView, QStackedLayout, and QPushButton, with table models refreshed every 3 seconds.',
-    url: 'https://github.com/chenpeizhi66/Distributed-Linux-Monitor',
+      'Built an RRT planner for UAV navigation with dynamic obstacle avoidance, a perception stack for moving obstacles, and Isaac Sim checks, then validated it on real hardware.',
+    technologies: ['RRT', 'YOLO', 'DBSCAN', 'Kalman filter', 'Isaac Sim'],
+  },
+  {
+    title: 'Autonomous navigation for Unitree G1',
+    meta: 'Carnegie Mellon University · Pittsburgh',
+    summary:
+      'Set up a Unitree G1 navigation stack in Isaac Gym with LiDAR SLAM, FAST-LIO2 odometry, and TARE and FAR planners for goal-directed motion around dynamic obstacles.',
+    technologies: ['Isaac Gym', 'FAST-LIO2', 'TARE', 'FAR Planner', 'LiDAR'],
   },
 ];
 
-/** Project entries from the public CV. Links are included only where a repository exists. */
-export const resumeProjects: ResumeProject[] = [
+/** Industry Experience on the latest CV. */
+export const industry: ExperienceItem[] = [
   {
-    title: 'Personal blog',
-    place: 'Carnegie Mellon University',
+    title: 'Software engineer, Nxperf',
+    meta: 'NIO · Chip Middleware · Shenzhen · Mar 2024–present',
     summary:
-      'Django blog with a customizable sidebar built from function-based views, including sorting, display toggles, and embedded HTML. Registration, login, and profile editing use custom CSS and Bulma. Deployed on AWS Elastic Beanstalk with an EC2 instance and MySQL.',
-    technologies: ['Django', 'CSS', 'Bulma', 'AWS'],
-    url: 'https://github.com/chenpeizhi66/Django-Blog',
+      'Built Nxperf, an NPU profiler that traces operator execution down to hardware scheduling, and sped up CVA operators in CUDA by up to 40%.',
+    technologies: ['CUDA', 'LTTng', 'C++'],
   },
   {
-    title: 'Lightweight web server',
-    place: 'Ubuntu 20.04',
+    title: 'Software engineer, RDK',
+    meta: 'NIO · Chip Middleware · Shenzhen · Mar 2024–present',
     summary:
-      'A multi-threaded reactor built with epoll and a thread pool. Regular expressions and a finite-state machine parse HTTP requests. An automatically growing buffer holds the bytes, and a min-heap timer closes idle connections. Stress-tested with webbench.',
-    technologies: ['C++', 'Linux', 'epoll'],
-    url: 'https://github.com/chenpeizhi66/webserver',
-  },
-  {
-    title: 'Hero breakout',
-    place: 'Carnegie Mellon University',
-    summary:
-      'A third-person shooting game in C++ and OpenGL. Virtual prop types share extensible methods so new props can inherit them.',
-    technologies: ['C++', 'OpenGL'],
-  },
-  {
-    title: '3D point cloud processing',
-    place: 'Carnegie Mellon University',
-    summary:
-      'Located window frames in a warehouse lidar scan, with about 85% detection accuracy on the résumé. RANSAC removes the ground, DBSCAN clusters the cloud, and PointNet++ classifies the objects.',
-    technologies: ['Point cloud', 'RANSAC', 'DBSCAN', 'PointNet++'],
+      'Built the camera and perception stack in NIO’s Robot Development Kit as ROS 2 nodes, with a gRPC control plane and a vision-language-action model on the same chip.',
+    technologies: ['ROS 2', 'gRPC', 'Protobuf', 'C++'],
   },
 ];

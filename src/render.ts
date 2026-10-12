@@ -1,6 +1,6 @@
-import { education, profile, work } from './content/profile.ts';
+import { education, profile } from './content/profile.ts';
 import { listedProjects } from './content/projects.ts';
-import { research, resumeProjects } from './content/resume.ts';
+import { industry, research } from './content/resume.ts';
 import { panels } from './content/panels.ts';
 import { places, separatePins } from './content/places.ts';
 import { openPanel } from './dialog.ts';
@@ -14,7 +14,9 @@ function esc(value: string): string {
 }
 
 function safeUrl(url: string): string {
-  return /^(https:\/\/|mailto:)/.test(url) ? esc(url) : '#';
+  if (/^(https:\/\/|mailto:)/.test(url)) return esc(url);
+  if (url.startsWith('/') && !url.includes('..')) return esc(`${import.meta.env.BASE_URL}${url.slice(1)}`);
+  return '#';
 }
 
 function externalAttrs(url: string): string {
@@ -67,17 +69,18 @@ export function renderPage(root: HTMLElement): void {
     )
     .join('');
 
-  const resumeCards = resumeProjects
-    .map((project) =>
-      projectCard({
-        title: project.title,
-        meta: project.place,
-        summary: project.summary,
-        technologies: project.technologies,
-        url: project.url,
-      }),
-    )
-    .join('');
+  const experienceCards = (items: typeof research) =>
+    items
+      .map((item) =>
+        projectCard({
+          title: item.title,
+          meta: item.meta,
+          summary: item.summary,
+          technologies: item.technologies,
+          url: item.url,
+        }),
+      )
+      .join('');
 
   const pins = separatePins(places)
     .map(({ place, left, top }) => {
@@ -115,8 +118,8 @@ export function renderPage(root: HTMLElement): void {
         <a class="brand" href="#top">${esc(profile.name)}</a>
         <nav aria-label="Sections">
           <a href="#about">About</a>
-          <a href="#projects">Projects</a>
           <a href="#experience">Experience</a>
+          <a href="#projects">Projects</a>
           <a href="#journey">Journey</a>
           <a href="#map">Map</a>
         </nav>
@@ -140,28 +143,21 @@ export function renderPage(root: HTMLElement): void {
           <p class="skills">${esc(profile.skills.join(', '))}.</p>
         </section>
 
-        <section id="projects">
-          <h2>Projects</h2>
-          <p>The project I am showing here is the Baja steering system.</p>
-          <div class="cards">${cards}</div>
-        </section>
-
         <section id="experience">
           <h2>Experience</h2>
-          <h3>Research</h3>
-          <ul class="facts">${facts(research.map((item) => ({ when: item.when, title: item.title, place: item.place, summary: item.summary })))}</ul>
-          ${research
-            .filter((item) => item.url)
-            .map(
-              (item) =>
-                `<p><a href="${safeUrl(item.url)}"${externalAttrs(item.url)}>Repository</a></p>`,
-            )
-            .join('')}
-          <h3>Industry</h3>
-          <ul class="facts">${facts(work)}</ul>
-          <h3>Résumé projects</h3>
-          <p>Taken from the CV. Hero breakout and the point-cloud project have no public repository, so they have no link.</p>
-          <div class="cards">${resumeCards}</div>
+          <div class="experience-block">
+            <h3>Research</h3>
+            <div class="cards">${experienceCards(research)}</div>
+          </div>
+          <div class="experience-block">
+            <h3>Industry</h3>
+            <div class="cards">${experienceCards(industry)}</div>
+          </div>
+        </section>
+
+        <section id="projects">
+          <h2>Projects</h2>
+          <div class="cards">${cards}</div>
         </section>
 
         <section id="journey">

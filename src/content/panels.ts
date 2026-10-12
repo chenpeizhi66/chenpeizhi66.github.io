@@ -1,5 +1,5 @@
 import { projectsByIds } from './projects.ts';
-import { research, resumeProjects } from './resume.ts';
+import { industry, research } from './resume.ts';
 
 export type PanelLink = {
   label: string;
@@ -17,69 +17,64 @@ export type Panel = {
   links: PanelLink[];
 };
 
-const mechanical = projectsByIds(['steering']);
+const baja = projectsByIds(['steering']);
+const pointCloud = projectsByIds(['point-cloud']);
+
+function linksFrom(items: { title: string; url?: string }[]): PanelLink[] {
+  return items.flatMap((item) => (item.url ? [{ label: item.title, url: item.url }] : []));
+}
 
 export const panels: Panel[] = [
   {
     id: 'dalian',
     category: 'Education',
     title: 'Dalian University of Technology',
-    dates: 'B.S., 2022',
-    summary: 'Undergraduate study, mechanical design courses, and the DUT Baja team.',
+    dates: 'B.Eng., Mechanical Engineering, 2018–2022',
+    summary: 'Bachelor’s degree in mechanical engineering, GPA 3.8/4.0, and the DUT Baja team.',
     details: [
-      'My bachelor’s degree is from Dalian University of Technology, 2022.',
-      ...mechanical.map((project) => `${project.title} (${project.context}). ${project.summary}`),
+      'Bachelor in Mechanical Engineering at Dalian University of Technology, September 2018–June 2022. GPA 3.8/4.0.',
+      ...baja.map((project) => `${project.title}. ${project.summary}`),
     ],
-    technologies: [...new Set(mechanical.flatMap((project) => project.technologies))],
-    links: mechanical.map((project) => ({ label: project.title, url: project.url })),
+    technologies: [...new Set(baja.flatMap((project) => project.technologies))],
+    links: linksFrom(baja),
   },
   {
-    id: 'crrc',
-    category: 'Internship',
-    title: 'Engineer assistant, CRRC',
-    dates: 'Summer 2021 · China',
-    summary: 'A summer internship. The duty I recorded was basic machining.',
-    details: [
-      'I interned at CRRC in China in summer 2021 as an engineer assistant.',
-      'The duty recorded for this internship is basic machining.',
-    ],
-    links: [],
+    id: 'nio',
+    category: 'Industry',
+    title: 'NIO',
+    dates: 'Shenzhen · Mar 2024–present',
+    summary: 'Software engineer on the chip middleware team.',
+    details: industry.map((item) => `${item.title}. ${item.summary}`),
+    technologies: [...new Set(industry.flatMap((item) => item.technologies))],
+    links: linksFrom(industry),
   },
   {
     id: 'cmu',
     category: 'Education',
     title: 'Carnegie Mellon University',
-    dates: 'M.S., Mechanical Engineering, 2024',
-    summary: 'Graduate study advised by Prof. Kenji Shimada in CERLAB.',
+    dates: 'MSc, Computational Design and Manufacturing, 2022–2024',
+    summary: 'Graduate study in Pittsburgh, GPA 3.7/4.0.',
     details: [
-      'My master’s degree is from the School of Mechanical Engineering at Carnegie Mellon University, 2024.',
-      'I have been advised by Prof. Kenji Shimada in CERLAB.',
-      `${research[0]?.title}. ${research[0]?.summary}`,
-      'I am interested in computer vision, machine learning, and software development.',
-      'I am currently learning Kratos.',
+      'MSc in Computational Design and Manufacturing at Carnegie Mellon University, August 2022–February 2024. GPA 3.7/4.0.',
+      ...research.map((item) => `${item.title}. ${item.summary}`),
+      ...pointCloud.map((project) => `${project.title}. ${project.summary}`),
     ],
-    links: [
-      {
-        label: 'Prof. Kenji Shimada',
-        url: 'https://www.meche.engineering.cmu.edu/directory/bios/shimada-kenji.html',
-      },
-      {
-        label: 'Mechanical Engineering at CMU',
-        url: 'https://www.meche.engineering.cmu.edu/',
-      },
-      ...(research[0]?.url ? [{ label: 'Distributed Linux Monitor', url: research[0].url }] : []),
+    technologies: [
+      ...new Set([
+        ...research.flatMap((item) => item.technologies),
+        ...pointCloud.flatMap((project) => project.technologies),
+      ]),
     ],
+    links: linksFrom([...research, ...pointCloud]),
   },
   {
     id: 'software',
-    category: 'Résumé',
-    title: 'Résumé projects',
-    summary: 'Projects written on the CV.',
-    details: resumeProjects.map((project) => `${project.title} (${project.place}). ${project.summary}`),
-    technologies: [...new Set(resumeProjects.flatMap((project) => project.technologies))],
-    links: resumeProjects.flatMap((project) =>
-      project.url ? [{ label: project.title, url: project.url }] : [],
-    ),
+    category: 'Projects',
+    title: 'Projects',
+    summary: 'The Baja steering system and warehouse LiDAR perception.',
+    details: [...baja, ...pointCloud].map((project) => `${project.title}. ${project.summary}`),
+    technologies: [...new Set([...baja, ...pointCloud].flatMap((project) => project.technologies))],
+    links: linksFrom([...baja, ...pointCloud]),
   },
 ];
 

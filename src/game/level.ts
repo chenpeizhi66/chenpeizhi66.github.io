@@ -46,7 +46,7 @@ export type Marker = {
 
 export const markers: Marker[] = [
   { id: 'dalian', x: 210, label: 'Dalian', icon: 'book' },
-  { id: 'crrc', x: 600, label: 'CRRC', icon: 'gear' },
+  { id: 'nio', x: 600, label: 'NIO', icon: 'gear' },
   { id: 'cmu', x: 960, label: 'CMU', icon: 'screen' },
   { id: 'software', x: 1340, label: 'Code', icon: 'laptop' },
 ];

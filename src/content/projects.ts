@@ -5,7 +5,7 @@ export type Project = {
   context: string;
   summary: string;
   technologies: string[];
-  url: string;
+  url?: string;
   /** Shown in the Projects section. Other entries stay available to the walk. */
   listed?: boolean;
 };
@@ -30,6 +30,15 @@ export const projects: Project[] = [
       'Modeled a steering system in Adams, simulated Ackermann geometry, plotted Ackermann and camber curves, used Adams Insight on the design, then did solid modeling and a strength check.',
     technologies: ['Adams'],
     url: 'https://github.com/chenpeizhi66/Use-CAE-software-analysis-to-optimize-the-design-of-steering-system',
+    listed: true,
+  },
+  {
+    id: 'point-cloud',
+    title: '3D point cloud processing',
+    context: 'Carnegie Mellon University',
+    summary:
+      'Localized window frames in a warehouse LiDAR scan, about 85% detection accuracy, using RANSAC, DBSCAN, and PointNet++.',
+    technologies: ['LiDAR', 'RANSAC', 'DBSCAN', 'PointNet++'],
     listed: true,
   },
   {

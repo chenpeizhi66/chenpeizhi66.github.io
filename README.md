@@ -8,13 +8,13 @@ The page is white and meant to be read. The game sits in the page. It is not a f
 
 | File | What it changes |
 | --- | --- |
-| `src/content/profile.ts` | Name, bio, education, work, skills, links |
+| `src/content/profile.ts` | Name, bio, education, skills, links |
 | `src/content/projects.ts` | Project cards. Only entries with `listed: true` appear in Projects |
-| `src/content/resume.ts` | Research and résumé projects |
+| `src/content/resume.ts` | Research and industry cards |
 | `src/content/panels.ts` | Chapters that open from the pixel walk |
 | `src/content/places.ts` | Visited cities. Add a city with `lat` and `lng`. Names stay hidden until hover |
 
-The copy on the site comes from the public homepage, CV page, and original GitHub repositories under [chenpeizhi66](https://github.com/chenpeizhi66). It does not invent degrees, jobs, or travel.
+The copy on the site comes from the latest CV in `public/assets/peizhi-chen-cv.pdf` and original GitHub repositories under [chenpeizhi66](https://github.com/chenpeizhi66). A card gets a repository link only when that repository exists.
 
 ## Run it locally
 
@@ -65,7 +65,7 @@ Pin positions use the same equirectangular projection as that file.
 
 ## Game
 
-Phaser 4 draws one side-scrolling scene: Dalian, the CRRC internship, Carnegie Mellon, and software projects. Move with A/D or the arrows, jump with Space, W, or up, and read a marker with E or Enter. Esc pauses. Restart puts the character back at the start. Left, Right, Jump, and Read buttons sit under the scene so the same walk works on a phone.
+Phaser 4 draws one side-scrolling scene: Dalian, NIO, Carnegie Mellon, and the two projects. Move with A/D or the arrows, jump with Space, W, or up, and read a marker with E or Enter. Esc pauses. Restart puts the character back at the start. Left, Right, Jump, and Read buttons sit under the scene so the same walk works on a phone.
 
 Pixel art in `src/game/art.ts` is original. There is no audio.
 

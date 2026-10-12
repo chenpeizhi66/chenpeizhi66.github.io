@@ -188,11 +188,15 @@ section + section {
   max-width: 46rem;
 }
 
+.experience-block + .experience-block {
+  margin-top: 1.75rem;
+}
+
 .cards {
   display: grid;
   grid-template-columns: 1fr;
   gap: 1px;
-  margin-top: 1.2rem;
+  margin-top: 0.7rem;
   background: var(--line);
   border: 1px solid var(--line);
 }
