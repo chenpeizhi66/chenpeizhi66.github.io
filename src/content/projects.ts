@@ -6,6 +6,8 @@ export type Project = {
   summary: string;
   technologies: string[];
   url: string;
+  /** Shown in the Projects section. Other entries stay available to the walk. */
+  listed?: boolean;
 };
 
 export const projects: Project[] = [
@@ -28,6 +30,7 @@ export const projects: Project[] = [
       'Modeled a steering system in Adams, simulated Ackermann geometry, plotted Ackermann and camber curves, used Adams Insight on the design, then did solid modeling and a strength check.',
     technologies: ['Adams'],
     url: 'https://github.com/chenpeizhi66/Use-CAE-software-analysis-to-optimize-the-design-of-steering-system',
+    listed: true,
   },
   {
     id: 'reducer',
@@ -74,6 +77,8 @@ export const projects: Project[] = [
     url: 'https://github.com/chenpeizhi66/Django-Blog',
   },
 ];
+
+export const listedProjects = projects.filter((project) => project.listed);
 
 export function projectsByIds(ids: readonly string[]): Project[] {
   return ids.flatMap((id) => {

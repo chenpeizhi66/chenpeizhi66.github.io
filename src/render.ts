@@ -1,5 +1,6 @@
 import { education, profile, work } from './content/profile.ts';
-import { projects } from './content/projects.ts';
+import { listedProjects } from './content/projects.ts';
+import { research, resumeProjects } from './content/resume.ts';
 import { panels } from './content/panels.ts';
 import { places, separatePins } from './content/places.ts';
 import { openPanel } from './dialog.ts';
@@ -35,18 +36,47 @@ export function renderPage(root: HTMLElement): void {
       )
       .join('');
 
-  const cards = projects
-    .map((project) => {
-      const meta = [project.year, project.context].filter(Boolean).join(' · ');
-      return `
+  const projectCard = (project: {
+    title: string;
+    meta: string;
+    summary: string;
+    technologies: string[];
+    url?: string;
+  }) => `
         <article class="card">
           <h3>${esc(project.title)}</h3>
-          <p class="meta">${esc(meta)}</p>
+          ${project.meta ? `<p class="meta">${esc(project.meta)}</p>` : ''}
           <p>${esc(project.summary)}</p>
           <p class="tech">${esc(project.technologies.join(' · '))}</p>
-          <a href="${safeUrl(project.url)}"${externalAttrs(project.url)}>Repository</a>
+          ${
+            project.url
+              ? `<a href="${safeUrl(project.url)}"${externalAttrs(project.url)}>Repository</a>`
+              : ''
+          }
         </article>`;
-    })
+
+  const cards = listedProjects
+    .map((project) =>
+      projectCard({
+        title: project.title,
+        meta: [project.year, project.context].filter(Boolean).join(' · '),
+        summary: project.summary,
+        technologies: project.technologies,
+        url: project.url,
+      }),
+    )
+    .join('');
+
+  const resumeCards = resumeProjects
+    .map((project) =>
+      projectCard({
+        title: project.title,
+        meta: project.place,
+        summary: project.summary,
+        technologies: project.technologies,
+        url: project.url,
+      }),
+    )
     .join('');
 
   const pins = separatePins(places)
@@ -86,6 +116,7 @@ export function renderPage(root: HTMLElement): void {
         <nav aria-label="Sections">
           <a href="#about">About</a>
           <a href="#projects">Projects</a>
+          <a href="#experience">Experience</a>
           <a href="#journey">Journey</a>
           <a href="#map">Map</a>
         </nav>
@@ -105,16 +136,32 @@ export function renderPage(root: HTMLElement): void {
           ${profile.paragraphs.map((paragraph) => `<p>${esc(paragraph)}</p>`).join('')}
           <h3>Education</h3>
           <ul class="facts">${facts(education)}</ul>
-          <h3>Work</h3>
-          <ul class="facts">${facts(work)}</ul>
           <h3>Skills</h3>
           <p class="skills">${esc(profile.skills.join(', '))}.</p>
         </section>
 
         <section id="projects">
           <h2>Projects</h2>
-          <p>Original repositories. Forks and course mirrors are left off this list.</p>
+          <p>The project I am showing here is the Baja steering system.</p>
           <div class="cards">${cards}</div>
+        </section>
+
+        <section id="experience">
+          <h2>Experience</h2>
+          <h3>Research</h3>
+          <ul class="facts">${facts(research.map((item) => ({ when: item.when, title: item.title, place: item.place, summary: item.summary })))}</ul>
+          ${research
+            .filter((item) => item.url)
+            .map(
+              (item) =>
+                `<p><a href="${safeUrl(item.url)}"${externalAttrs(item.url)}>Repository</a></p>`,
+            )
+            .join('')}
+          <h3>Industry</h3>
+          <ul class="facts">${facts(work)}</ul>
+          <h3>Résumé projects</h3>
+          <p>Taken from the CV. Hero breakout and the point-cloud project have no public repository, so they have no link.</p>
+          <div class="cards">${resumeCards}</div>
         </section>
 
         <section id="journey">

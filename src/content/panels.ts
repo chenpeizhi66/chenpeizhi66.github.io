@@ -1,4 +1,5 @@
 import { projectsByIds } from './projects.ts';
+import { research, resumeProjects } from './resume.ts';
 
 export type PanelLink = {
   label: string;
@@ -16,8 +17,7 @@ export type Panel = {
   links: PanelLink[];
 };
 
-const mechanical = projectsByIds(['leg', 'steering', 'reducer']);
-const software = projectsByIds(['webserver', 'monitor', 'opencv', 'django']);
+const mechanical = projectsByIds(['steering']);
 
 export const panels: Panel[] = [
   {
@@ -41,7 +41,7 @@ export const panels: Panel[] = [
     summary: 'A summer internship. The duty I recorded was basic machining.',
     details: [
       'I interned at CRRC in China in summer 2021 as an engineer assistant.',
-      'On my CV, the work listed for this internship is basic machining.',
+      'The duty recorded for this internship is basic machining.',
     ],
     links: [],
   },
@@ -54,6 +54,7 @@ export const panels: Panel[] = [
     details: [
       'My master’s degree is from the School of Mechanical Engineering at Carnegie Mellon University, 2024.',
       'I have been advised by Prof. Kenji Shimada in CERLAB.',
+      `${research[0]?.title}. ${research[0]?.summary}`,
       'I am interested in computer vision, machine learning, and software development.',
       'I am currently learning Kratos.',
     ],
@@ -66,16 +67,19 @@ export const panels: Panel[] = [
         label: 'Mechanical Engineering at CMU',
         url: 'https://www.meche.engineering.cmu.edu/',
       },
+      ...(research[0]?.url ? [{ label: 'Distributed Linux Monitor', url: research[0].url }] : []),
     ],
   },
   {
     id: 'software',
-    category: 'Projects',
-    title: 'Software practice',
-    summary: 'Programs I wrote while learning systems, vision, and the web.',
-    details: software.map((project) => `${project.title}. ${project.summary}`),
-    technologies: [...new Set(software.flatMap((project) => project.technologies))],
-    links: software.map((project) => ({ label: project.title, url: project.url })),
+    category: 'Résumé',
+    title: 'Résumé projects',
+    summary: 'Projects written on the CV.',
+    details: resumeProjects.map((project) => `${project.title} (${project.place}). ${project.summary}`),
+    technologies: [...new Set(resumeProjects.flatMap((project) => project.technologies))],
+    links: resumeProjects.flatMap((project) =>
+      project.url ? [{ label: project.title, url: project.url }] : [],
+    ),
   },
 ];
 
