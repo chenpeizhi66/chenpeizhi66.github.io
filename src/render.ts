@@ -100,6 +100,7 @@ export function renderPage(root: HTMLElement): void {
           <a href="#journey">Journey</a>
           <a href="#map">Map</a>
         </nav>
+        <a class="gallery-link" href="${safeUrl('/gallery/')}">Gallery</a>
       </div>
     </header>
     <main id="top">

@@ -13,8 +13,15 @@ The page is white and meant to be read. The game sits in the page. It is not a f
 | `src/content/resume.ts` | Research and industry cards |
 | `src/content/panels.ts` | Notes that open from the three markers in the pixel walk |
 | `src/content/places.ts` | Visited cities. Add a city with `lat` and `lng`. Names stay hidden until hover |
+| `src/content/gallery.ts` | Where the Gallery page reads photographs. The pictures themselves live in the `gallery` repository |
 
 The copy on the site comes from the latest CV in `public/assets/peizhi-chen-cv.pdf` and original GitHub repositories under [chenpeizhi66](https://github.com/chenpeizhi66). A card gets a repository link only when that repository exists.
+
+## Gallery
+
+Gallery is a separate page at `/gallery/`. It is not a section on the home page. The only way in is the Gallery link at the top right.
+
+Photographs live in the public repository [chenpeizhi66/gallery](https://github.com/chenpeizhi66/gallery), inside `photos/`. Adding a picture there is enough. The page reads that folder. Optional titles go in `photos/captions.json`.
 
 ## Run it locally
 

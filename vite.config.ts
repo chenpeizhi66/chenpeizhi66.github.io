@@ -1,3 +1,4 @@
+import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 
 // User site (USERNAME.github.io) is served from /.
@@ -6,6 +7,12 @@ export default defineConfig({
   base: '/',
   build: {
     target: 'es2022',
+    rollupOptions: {
+      input: {
+        main: resolve(import.meta.dirname, 'index.html'),
+        gallery: resolve(import.meta.dirname, 'gallery/index.html'),
+      },
+    },
   },
   server: {
     host: '127.0.0.1',

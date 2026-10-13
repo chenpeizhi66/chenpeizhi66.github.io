@@ -70,12 +70,27 @@ a:hover {
 }
 
 .header-inner {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'brand gallery'
+    'nav nav';
   align-items: baseline;
-  justify-content: space-between;
-  gap: 0.4rem 1.25rem;
+  gap: 0.35rem 1.25rem;
   padding: 0.85rem 0;
+}
+
+.brand {
+  grid-area: brand;
+}
+
+.header-inner nav {
+  grid-area: nav;
+}
+
+a.gallery-link:hover,
+a.gallery-link:focus-visible {
+  text-decoration: underline;
 }
 
 .brand {
@@ -434,7 +449,127 @@ button:hover {
   margin-top: 0.4rem;
 }
 
+.gallery-page main {
+  padding: 2.6rem 0 4rem;
+}
+
+.gallery-note {
+  max-width: 36rem;
+  color: var(--muted);
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: 1rem 0.85rem;
+  margin-top: 1.5rem;
+}
+
+.gallery-cell,
+.shot {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.45rem;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+}
+
+button.shot {
+  cursor: zoom-in;
+}
+
+.shot img,
+.gallery-video {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  background: var(--sky);
+}
+
+.gallery-video {
+  object-fit: contain;
+  background: #f3f3f3;
+}
+
+.shot:hover,
+.shot:focus-visible {
+  background: transparent;
+}
+
+.gallery-grid figure {
+  margin: 0;
+}
+
+.other-list {
+  margin-top: 2rem;
+}
+
+.viewer {
+  width: min(64rem, calc(100vw - 1.5rem));
+  max-height: calc(100vh - 1.5rem);
+  margin: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.viewer::backdrop {
+  background: rgba(255, 255, 255, 0.94);
+}
+
+.viewer figure {
+  margin: 0;
+}
+
+.viewer img {
+  max-width: 100%;
+  max-height: calc(100vh - 7.5rem);
+  width: auto;
+  height: auto;
+  margin: 0 auto;
+  object-fit: contain;
+}
+
+.viewer figcaption {
+  margin: 0.7rem 0 0;
+  text-align: center;
+}
+
+.viewer figcaption:empty {
+  display: none;
+}
+
+.viewer-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+}
+
 @media (min-width: 760px) {
+  .header-inner {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas: 'brand nav gallery';
+    column-gap: 1.5rem;
+  }
+
+  .header-inner nav {
+    justify-content: flex-end;
+  }
+
+  .gallery-link {
+    margin-left: 0.25rem;
+    padding-left: 1rem;
+    border-left: 1px solid var(--line);
+  }
+
   .cards {
     grid-template-columns: 1fr 1fr;
   }
