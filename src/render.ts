@@ -1,9 +1,7 @@
 import { profile } from './content/profile.ts';
 import { listedProjects } from './content/projects.ts';
 import { industry, research } from './content/resume.ts';
-import { panels } from './content/panels.ts';
 import { places, separatePins } from './content/places.ts';
-import { openPanel } from './dialog.ts';
 
 function esc(value: string): string {
   return value
@@ -84,15 +82,6 @@ export function renderPage(root: HTMLElement): void {
     })
     .join('');
 
-  const chapters = panels
-    .map(
-      (panel) => `
-        <li>
-          <button type="button" data-panel="${esc(panel.id)}">${esc(panel.title)}</button>
-        </li>`,
-    )
-    .join('');
-
   const contact = profile.links
     .map(
       (link) => `<li><a href="${safeUrl(link.url)}"${externalAttrs(link.url)}>${esc(link.label)}</a></li>`,
@@ -145,23 +134,18 @@ export function renderPage(root: HTMLElement): void {
         </section>
 
         <section id="journey">
-          <h2>A short walk</h2>
-          <p>
-            The ground is round, like the earth. Walk the Dalian coast, cross the water, and come into Pittsburgh.
-            Keep going and the curve brings you back to the start. Stand by a marker and press E.
-            The chapters under the scene open the same notes if you would rather not play.
-          </p>
+          <h2>A Little Story</h2>
           <div class="game-shell">
             <div class="game-toolbar">
-              <p>A or D, or the arrow keys, to move. Space, W, or up to jump. E or Enter to read. Esc to pause.</p>
+              <p>A or D to move. E to interact.</p>
               <div class="toolbar-actions">
                 <button type="button" id="pause-button">Pause</button>
                 <button type="button" id="restart-button">Restart</button>
               </div>
             </div>
-            <p id="game-status" role="status">The walk loads when you reach this part of the page.</p>
+            <p id="game-status" role="status"></p>
             <div class="stage">
-              <div id="game-viewport" class="game-viewport" tabindex="0" aria-label="Pixel walk through Peizhi Chen's experience"></div>
+              <div id="game-viewport" class="game-viewport" tabindex="0" aria-label="A little story. A or D to move. E to interact."></div>
               <div id="pause-overlay" class="pause-overlay" hidden>
                 <p>Paused</p>
                 <button type="button" id="resume-button">Resume</button>
@@ -175,8 +159,6 @@ export function renderPage(root: HTMLElement): void {
               <button type="button" data-control="read">Read</button>
             </div>
           </div>
-          <h3>Chapters</h3>
-          <ul class="chapters">${chapters}</ul>
         </section>
 
         <section id="map">
@@ -198,9 +180,5 @@ export function renderPage(root: HTMLElement): void {
       </div>
     </footer>
   `;
-
-  root.querySelectorAll<HTMLButtonElement>('[data-panel]').forEach((button) => {
-    button.addEventListener('click', () => openPanel(button.dataset.panel ?? ''));
-  });
 
 }

@@ -11,7 +11,7 @@ The page is white and meant to be read. The game sits in the page. It is not a f
 | `src/content/profile.ts` | Name, bio, education, skills, links |
 | `src/content/projects.ts` | Project cards. Only entries with `listed: true` appear in Projects |
 | `src/content/resume.ts` | Research and industry cards |
-| `src/content/panels.ts` | Chapters that open from the pixel walk |
+| `src/content/panels.ts` | Notes that open from the three markers in the pixel walk |
 | `src/content/places.ts` | Visited cities. Add a city with `lat` and `lng`. Names stay hidden until hover |
 
 The copy on the site comes from the latest CV in `public/assets/peizhi-chen-cv.pdf` and original GitHub repositories under [chenpeizhi66](https://github.com/chenpeizhi66). A card gets a repository link only when that repository exists.
@@ -65,7 +65,7 @@ Pin positions use the same equirectangular projection as that file.
 
 ## Game
 
-Phaser 4 draws one looping scene on a round earth: a Dalian waterfront, a road across the water, and a Pittsburgh hillside with its bridges. The ground curves under your feet, and walking off either end comes back around to the start. Move with A/D or the arrows, jump with Space, W, or up, and read a marker with E or Enter. Esc pauses. Restart puts the character back at the start. Left, Right, Jump, and Read buttons sit under the scene so the same walk works on a phone.
+Phaser 4 draws one looping scene on a round earth. The walk passes Dalian, Pittsburgh, and Shenzhen, with cross roads between them, and walking off either end comes back around to the start. A or D moves. E reads the marker you are standing beside. Left, Right, Jump, and Read buttons sit under the scene so the same walk works on a phone.
 
 The skyline is original pixel art in `src/game/cityscape.ts`. Labels are drawn as pixels, and the canvas scales by whole numbers so the type stays sharp. There is no audio.
 
@@ -73,7 +73,7 @@ The skyline is original pixel art in `src/game/cityscape.ts`. Labels are drawn a
 
 - The landing text is readable without starting the game.
 - The character walks, jumps, and does not fall through the ground.
-- Each of the four markers opens a chapter, and the chapter buttons do the same.
+- Each of the three markers opens its note.
 - Pause, Esc, and Restart work.
 - The map shows a red dot for each visited city, and the city name appears on hover.
 - The visitor line shows a number, or a clear unavailable message if the counter is down.

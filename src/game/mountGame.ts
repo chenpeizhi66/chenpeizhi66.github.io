@@ -53,8 +53,8 @@ export function mountGame(): void {
     started = false;
     status.textContent =
       error instanceof Error
-        ? `${error.message} You can still open each chapter below.`
-        : 'The walk could not start. You can still open each chapter below.';
+        ? error.message
+        : 'The walk could not start.';
     return;
   }
 
@@ -157,7 +157,7 @@ export function mountGame(): void {
   new ResizeObserver(fitCrisp).observe(viewport);
   game.events.once(Phaser.Core.Events.READY, () => {
     viewport.classList.add('is-ready');
-    status.textContent = 'Click the scene, then use the keyboard. On a phone, use the buttons underneath.';
+    status.textContent = '';
     fitCrisp();
   });
 

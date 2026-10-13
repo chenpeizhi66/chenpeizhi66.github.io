@@ -18,18 +18,20 @@ export const gulls = [
 ];
 
 export const placeLabels = [
-  { id: 'coast', text: 'THE COAST' },
+  { id: 'roads', text: 'CROSS ROADS' },
   { id: 'dalian', text: 'DALIAN' },
-  { id: 'crossing', text: 'CROSSING' },
   { id: 'pittsburgh', text: 'PITTSBURGH' },
+  { id: 'shenzhen', text: 'SHENZHEN' },
 ] as const;
 
 export function placeFor(x: number): (typeof placeLabels)[number] {
   let u = x % WORLD_W;
   if (u < 0) u += WORLD_W;
-  if (u < 180 || u >= 2580) return placeLabels[0];
-  if (u < 980) return placeLabels[1];
-  if (u < 1560) return placeLabels[2];
+  if (u < 180 || u >= 3050) return placeLabels[0];
+  if (u < 1000) return placeLabels[1];
+  if (u < 1560) return placeLabels[0];
+  if (u < 2520) return placeLabels[2];
+  if (u < 2720) return placeLabels[0];
   return placeLabels[3];
 }
 
@@ -519,7 +521,7 @@ export function drawWorld(ctx: CanvasRenderingContext2D): void {
     ctx.fillRect(x - 3, GROUND_Y - 32, 8, 4);
   }
 
-  drawSign(ctx, 1512, 'RIVER');
+  drawSign(ctx, 1512, 'CROSS');
 
   for (let x = 0; x < WORLD_W; x += 4) {
     const coast = coastal(x);

@@ -16,15 +16,15 @@ const journey = document.querySelector<HTMLElement>('#journey');
 if (journey) {
   const start = () => {
     const status = document.querySelector<HTMLElement>('#game-status');
-    if (status) status.textContent = 'Loading the walk…';
+    if (status) status.textContent = '';
     void import('./game/mountGame.ts')
       .then((mod) => mod.mountGame())
       .catch((error: unknown) => {
         if (!status) return;
         status.textContent =
           error instanceof Error
-            ? `${error.message} You can still open each chapter below.`
-            : 'The walk could not start. You can still open each chapter below.';
+            ? error.message
+            : 'The walk could not start.';
       });
   };
 

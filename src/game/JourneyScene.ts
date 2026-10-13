@@ -283,7 +283,7 @@ export class JourneyScene extends Phaser.Scene {
       const marker = markers.find((item) => item.id === this.nearest);
       if (marker) {
         this.prompt.setVisible(true);
-        if (hint) hint.textContent = `${marker.label}. Press E, Enter, or Read.`;
+        if (hint) hint.textContent = `${marker.label}. Press E.`;
       }
     } else {
       this.prompt.setVisible(false);

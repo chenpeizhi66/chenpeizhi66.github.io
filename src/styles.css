@@ -113,6 +113,10 @@ nav a:focus-visible {
   color: var(--muted);
 }
 
+#game-status:empty {
+  display: none;
+}
+
 h1,
 h2,
 h3,
@@ -147,8 +151,7 @@ h3 {
 }
 
 .links,
-.facts,
-.chapters {
+.facts {
   margin: 0;
   padding: 0;
   list-style: none;
@@ -300,13 +303,6 @@ button:hover {
   min-height: 48px;
   user-select: none;
   touch-action: manipulation;
-}
-
-.chapters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.4rem;
 }
 
 .map-frame {

@@ -32,9 +32,8 @@ export type Marker = {
 
 export const markers: Marker[] = [
   { id: 'dalian', x: 520, label: 'Dalian', icon: 'book' },
-  { id: 'nio', x: 1080, label: 'NIO', icon: 'gear' },
-  { id: 'cmu', x: 2004, label: 'CMU', icon: 'screen' },
-  { id: 'software', x: 2460, label: 'Code', icon: 'laptop' },
+  { id: 'pittsburgh', x: 2004, label: 'Pittsburgh', icon: 'screen' },
+  { id: 'shenzhen', x: 2920, label: 'Shenzhen', icon: 'gear' },
 ];
 
 export const SPAWN_X = 220;
