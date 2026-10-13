@@ -147,8 +147,8 @@ export function renderPage(root: HTMLElement): void {
         <section id="journey">
           <h2>A short walk</h2>
           <p>
-            Walk the Dalian coast, cross the water, and come into Pittsburgh. The road loops,
-            so keep going and you are back at the start. Stand by a marker and press E.
+            The ground is round, like the earth. Walk the Dalian coast, cross the water, and come into Pittsburgh.
+            Keep going and the curve brings you back to the start. Stand by a marker and press E.
             The chapters under the scene open the same notes if you would rather not play.
           </p>
           <div class="game-shell">

@@ -2,11 +2,13 @@ import Phaser from 'phaser';
 import { consumeInteract, consumeJump, held } from './controls.ts';
 import { drawIcons, drawLabel, drawPlayer, paintTexture } from './art.ts';
 import { drawWorld, gulls, life, paintCreatures, placeFor, placeLabels } from './cityscape.ts';
+import { paintGlobe, project } from './earth.ts';
 import {
   GROUND_Y,
   markers,
   platforms,
   SPAWN_X,
+  VIEW_H,
   VIEW_W,
   WORLD_H,
   WORLD_W,
@@ -29,10 +31,25 @@ export class JourneyScene extends Phaser.Scene {
   private cloudDrift = 0;
   private place!: Phaser.GameObjects.Image;
   private placeId = 'dalian';
+  private avatar!: Phaser.GameObjects.Image;
+  private globeTexture!: Phaser.Textures.CanvasTexture;
+  private worldSource!: CanvasImageSource;
+  private markerIcons: Phaser.GameObjects.Image[] = [];
+  private markerLabels: Phaser.GameObjects.Image[] = [];
+  private markerZones: Phaser.GameObjects.Zone[] = [];
   private flag!: Phaser.GameObjects.Image;
   private car!: Phaser.GameObjects.Image;
-  private drops: Phaser.GameObjects.Image[] = [];
-  private birds: { sprite: Phaser.GameObjects.Image; speed: number; base: number; phase: number }[] = [];
+  private carX = life.incline.x0;
+  private carY = life.incline.y0;
+  private dropState: { sprite: Phaser.GameObjects.Image; worldX: number; worldY: number }[] = [];
+  private birdState: {
+    sprite: Phaser.GameObjects.Image;
+    worldX: number;
+    worldY: number;
+    speed: number;
+    base: number;
+    phase: number;
+  }[] = [];
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private keyA!: Phaser.Input.Keyboard.Key;
   private keyD!: Phaser.Input.Keyboard.Key;
@@ -56,9 +73,10 @@ export class JourneyScene extends Phaser.Scene {
   create(): void {
     this.reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     paintTexture(this, 'world', WORLD_W, WORLD_H, drawWorld);
-    for (const offset of [-WORLD_W, 0, WORLD_W]) {
-      this.add.image(offset, 0, 'world').setOrigin(0, 0).setDepth(0);
-    }
+    paintTexture(this, 'globe', VIEW_W, VIEW_H, () => {});
+    this.globeTexture = this.textures.get('globe') as Phaser.Textures.CanvasTexture;
+    this.worldSource = (this.textures.get('world') as Phaser.Textures.CanvasTexture).getSourceImage() as HTMLCanvasElement;
+    this.add.image(0, 0, 'globe').setOrigin(0, 0).setScrollFactor(0).setDepth(0);
 
     paintTexture(this, 'clouds', 140, 36, (ctx) => {
       ctx.fillStyle = '#ffffff';
@@ -78,22 +96,27 @@ export class JourneyScene extends Phaser.Scene {
     this.farClouds = this.add.tileSprite(0, 40, VIEW_W, 24, 'clouds-far').setOrigin(0, 0).setScrollFactor(0).setDepth(1);
 
     paintCreatures(this);
-    this.flag = this.add.image(life.flag.x + 1, life.flag.y, 'flag-0').setOrigin(0, 0).setDepth(4);
-    this.car = this.add.image(life.incline.x0, life.incline.y0, 'incline-car').setOrigin(0, 0.5).setDepth(4);
-    this.birds = gulls.map((gull) => ({
-      sprite: this.add.image(gull.x, gull.y, 'gull-0').setDepth(4),
+    this.flag = this.add.image(0, 0, 'flag-0').setOrigin(0, 0).setDepth(16).setScrollFactor(0);
+    this.car = this.add.image(0, 0, 'incline-car').setOrigin(0, 0.5).setDepth(16).setScrollFactor(0);
+    this.birdState = gulls.map((gull) => ({
+      sprite: this.add.image(0, 0, 'gull-0').setDepth(14).setScrollFactor(0),
+      worldX: gull.x,
+      worldY: gull.y,
       speed: gull.speed,
       base: gull.y,
       phase: gull.phase,
     }));
-    this.drops = Array.from({ length: 6 }, (_, index) =>
-      this.add.image(life.fountain.x + (index % 3) * 4, life.fountain.y + index * 3, 'drop').setDepth(4),
-    );
+    this.dropState = Array.from({ length: 6 }, (_, index) => ({
+      sprite: this.add.image(0, 0, 'drop').setDepth(15).setScrollFactor(0),
+      worldX: life.fountain.x + (index % 3) * 4,
+      worldY: life.fountain.y + index * 3,
+    }));
 
     drawPlayer(this);
     drawIcons(this);
 
-    this.player = this.physics.add.sprite(SPAWN_X, GROUND_Y, 'idle0').setOrigin(0.5, 1).setDepth(5);
+    this.player = this.physics.add.sprite(SPAWN_X, GROUND_Y, 'idle0').setOrigin(0.5, 1).setDepth(5).setVisible(false);
+    this.avatar = this.add.image(VIEW_W / 2, GROUND_Y, 'idle0').setOrigin(0.5, 1).setDepth(20).setScrollFactor(0);
     const body = this.player.body as Phaser.Physics.Arcade.Body;
     body.setSize(16, 36);
     body.setOffset(8, 12);
@@ -120,17 +143,22 @@ export class JourneyScene extends Phaser.Scene {
     this.physics.add.collider(this.player, solids);
     for (const marker of markers) {
       drawLabel(this, `label-${marker.id}`, marker.label, '#1c1c1c', '#ffffff');
-      this.add.image(marker.x, GROUND_Y, `icon-${marker.icon}`).setOrigin(0.5, 1).setDepth(6);
-      this.add.image(marker.x, GROUND_Y - 44, `label-${marker.id}`).setOrigin(0.5, 1).setDepth(7);
-      const zone = this.add.zone(marker.x, GROUND_Y - 20, 72, 56);
+      this.markerIcons.push(
+        this.add.image(0, 0, `icon-${marker.icon}`).setOrigin(0.5, 1).setDepth(16).setScrollFactor(0),
+      );
+      this.markerLabels.push(
+        this.add.image(0, 0, `label-${marker.id}`).setOrigin(0.5, 1).setDepth(26).setScrollFactor(0),
+      );
+      const zone = this.add.zone(0, 0, 72, 56).setScrollFactor(0);
       zone.setInteractive({ useHandCursor: true });
       zone.on('pointerdown', () => this.hooks.onCheckpoint(marker.id));
+      this.markerZones.push(zone);
     }
 
     drawLabel(this, 'label-press', 'PRESS E', '#ffffff', '#1c1c1c');
-    this.prompt = this.add.image(0, 0, 'label-press').setOrigin(0.5, 1).setDepth(8).setVisible(false);
+    this.prompt = this.add.image(0, 0, 'label-press').setOrigin(0.5, 1).setDepth(28).setScrollFactor(0).setVisible(false);
     drawLabel(this, 'label-walk', 'WALK', '#1c1c1c', '#ffffff');
-    this.walkHint = this.add.image(SPAWN_X, 78, 'label-walk').setOrigin(0, 0).setDepth(4);
+    this.walkHint = this.add.image(0, 0, 'label-walk').setOrigin(0, 0).setDepth(18).setScrollFactor(0);
     for (const place of placeLabels) {
       drawLabel(this, `place-${place.id}`, place.text, '#1c1c1c', '#ffffff', 3);
     }
@@ -151,10 +179,9 @@ export class JourneyScene extends Phaser.Scene {
     this.keySpace = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     keyboard.disableGlobalCapture();
 
-    this.cameras.main.setBounds(-WORLD_W, 0, WORLD_W * 3, WORLD_H);
-    this.cameras.main.startFollow(this.player, true, this.reduceMotion ? 1 : 0.12, 1);
-    this.cameras.main.setDeadzone(60, WORLD_H);
+    this.cameras.main.setScroll(0, 0);
     this.cameras.main.roundPixels = true;
+    this.layoutGlobe();
   }
 
   restartWalk(): void {
@@ -166,7 +193,8 @@ export class JourneyScene extends Phaser.Scene {
     const body = this.player.body as Phaser.Physics.Arcade.Body;
     body.setVelocity(0, 0);
     this.cloudDrift = 0;
-    this.cameras.main.scrollX = 0;
+    this.cameras.main.setScroll(0, 0);
+    this.layoutGlobe();
   }
 
   setPaused(paused: boolean): void {
@@ -254,7 +282,7 @@ export class JourneyScene extends Phaser.Scene {
     if (this.nearest) {
       const marker = markers.find((item) => item.id === this.nearest);
       if (marker) {
-        this.prompt.setPosition(marker.x, GROUND_Y - 86).setVisible(true);
+        this.prompt.setVisible(true);
         if (hint) hint.textContent = `${marker.label}. Press E, Enter, or Read.`;
       }
     } else {
@@ -268,10 +296,11 @@ export class JourneyScene extends Phaser.Scene {
         (Phaser.Input.Keyboard.JustDown(this.keyE) || Phaser.Input.Keyboard.JustDown(this.keyEnter)));
     if (interact && this.nearest) this.hooks.onCheckpoint(this.nearest);
 
-    const scrolled = this.cameras.main.scrollX + this.cloudDrift;
+    const scrolled = this.player.x + this.cloudDrift;
     const drift = this.reduceMotion ? 0 : 1;
     this.clouds.tilePositionX = scrolled * 0.22 * drift;
     this.farClouds.tilePositionX = scrolled * 0.1 * drift;
+    this.layoutGlobe();
   }
 
   private driftLife(delta: number): void {
@@ -283,10 +312,10 @@ export class JourneyScene extends Phaser.Scene {
 
     const seconds = delta / 1000;
     const flapping = Math.floor(this.time.now / 180) % 2 === 0;
-    for (const bird of this.birds) {
-      bird.sprite.x += bird.speed * seconds;
-      if (bird.sprite.x > WORLD_W) bird.sprite.x -= WORLD_W;
-      bird.sprite.y = bird.base + Math.sin(this.time.now / 420 + bird.phase) * 5;
+    for (const bird of this.birdState) {
+      bird.worldX += bird.speed * seconds;
+      if (bird.worldX > WORLD_W) bird.worldX -= WORLD_W;
+      bird.worldY = bird.base + Math.sin(this.time.now / 420 + bird.phase) * 5;
       bird.sprite.setTexture(flapping ? 'gull-0' : 'gull-1');
     }
 
@@ -295,26 +324,65 @@ export class JourneyScene extends Phaser.Scene {
     const span = 8;
     const ping = (this.time.now / 1000) % (span * 2);
     const along = ping <= span ? ping / span : (span * 2 - ping) / span;
-    this.car.setPosition(
-      life.incline.x0 + (life.incline.x1 - life.incline.x0) * along,
-      life.incline.y0 + (life.incline.y1 - life.incline.y0) * along,
-    );
+    this.carX = life.incline.x0 + (life.incline.x1 - life.incline.x0) * along;
+    this.carY = life.incline.y0 + (life.incline.y1 - life.incline.y0) * along;
 
-    for (const [index, drop] of this.drops.entries()) {
-      drop.y -= 28 * seconds;
-      drop.x += Math.sin(this.time.now / 200 + index) * 0.15;
-      if (drop.y < life.fountain.y - 26) {
-        drop.y = life.fountain.y;
-        drop.x = life.fountain.x + (index % 3) * 4;
+    for (const [index, drop] of this.dropState.entries()) {
+      drop.worldY -= 28 * seconds;
+      drop.worldX += Math.sin(this.time.now / 200 + index) * 0.15;
+      if (drop.worldY < life.fountain.y - 26) {
+        drop.worldY = life.fountain.y;
+        drop.worldX = life.fountain.x + (index % 3) * 4;
       }
     }
+  }
+
+  private placeOnEarth(image: Phaser.GameObjects.Image, worldX: number, worldY: number, depth: number): void {
+    const spot = project(worldX, worldY, this.player.x);
+    image.setVisible(spot.visible);
+    if (!spot.visible) return;
+    image.setPosition(Math.round(spot.x), Math.round(spot.y));
+    image.setRotation(0);
+    image.setDepth(depth);
+  }
+
+  private layoutGlobe(): void {
+    const ctx = this.globeTexture.getContext();
+    paintGlobe(ctx, this.worldSource, this.player.x);
+    this.globeTexture.refresh();
+
+    const feet = project(this.player.x, this.player.y, this.player.x);
+    this.avatar.setPosition(feet.x, feet.y).setRotation(0).setDepth(20);
+    this.avatar.setTexture(this.player.texture.key);
+    this.avatar.setFlipX(this.player.flipX);
+
+    markers.forEach((marker, index) => {
+      const icon = this.markerIcons[index];
+      const label = this.markerLabels[index];
+      const zone = this.markerZones[index];
+      if (!icon || !label || !zone) return;
+      this.placeOnEarth(icon, marker.x, GROUND_Y, 16);
+      this.placeOnEarth(label, marker.x, GROUND_Y - 44, 26);
+      const spot = project(marker.x, GROUND_Y - 16, this.player.x);
+      zone.setPosition(spot.visible ? spot.x : -400, spot.visible ? spot.y : -400);
+    });
+
+    if (this.prompt.visible && this.nearest) {
+      const marker = markers.find((item) => item.id === this.nearest);
+      if (marker) this.placeOnEarth(this.prompt, marker.x, GROUND_Y - 86, 28);
+    }
+    if (this.walkHint.visible) this.placeOnEarth(this.walkHint, SPAWN_X, 78, 18);
+
+    this.placeOnEarth(this.flag, life.flag.x + 1, life.flag.y, 16);
+    this.placeOnEarth(this.car, this.carX, this.carY, 16);
+    for (const bird of this.birdState) this.placeOnEarth(bird.sprite, bird.worldX, bird.worldY, 14);
+    for (const drop of this.dropState) this.placeOnEarth(drop.sprite, drop.worldX, drop.worldY, 15);
   }
 
   private wrapWorld(): void {
     const shift = this.player.x >= WORLD_W ? -WORLD_W : this.player.x < 0 ? WORLD_W : 0;
     if (shift === 0) return;
     this.player.x += shift;
-    this.cameras.main.scrollX += shift;
     this.cloudDrift -= shift;
   }
 }

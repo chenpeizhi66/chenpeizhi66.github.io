@@ -65,7 +65,7 @@ Pin positions use the same equirectangular projection as that file.
 
 ## Game
 
-Phaser 4 draws one looping side-scrolling scene: a Dalian waterfront, a road across the water, and a Pittsburgh hillside with its bridges. Walk off either end and the path continues back to the start. Move with A/D or the arrows, jump with Space, W, or up, and read a marker with E or Enter. Esc pauses. Restart puts the character back at the start. Left, Right, Jump, and Read buttons sit under the scene so the same walk works on a phone.
+Phaser 4 draws one looping scene on a round earth: a Dalian waterfront, a road across the water, and a Pittsburgh hillside with its bridges. The ground curves under your feet, and walking off either end comes back around to the start. Move with A/D or the arrows, jump with Space, W, or up, and read a marker with E or Enter. Esc pauses. Restart puts the character back at the start. Left, Right, Jump, and Read buttons sit under the scene so the same walk works on a phone.
 
 The skyline is original pixel art in `src/game/cityscape.ts`. Labels are drawn as pixels, and the canvas scales by whole numbers so the type stays sharp. There is no audio.
 

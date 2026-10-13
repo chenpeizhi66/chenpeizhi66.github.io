@@ -48,8 +48,10 @@ function wave(x: number, cycles: number): number {
 }
 
 /** 1 on the Dalian coast, 0 in Pittsburgh, matching again at both ends of the loop. */
-function coastal(x: number): number {
-  const u = x / WORLD_W;
+export function coastal(x: number): number {
+  let wrapped = x % WORLD_W;
+  if (wrapped < 0) wrapped += WORLD_W;
+  const u = wrapped / WORLD_W;
   if (u < 0.3) return 1;
   if (u < 0.48) return 1 - (u - 0.3) / 0.18;
   if (u < 0.78) return 0;
@@ -432,14 +434,6 @@ function drawFountain(ctx: CanvasRenderingContext2D): void {
 }
 
 export function drawWorld(ctx: CanvasRenderingContext2D): void {
-  for (let x = 0; x < WORLD_W; x += 4) {
-    const coast = coastal(x);
-    ctx.fillStyle = mix('#c5d5df', '#b9e3f6', coast);
-    ctx.fillRect(x, 0, 4, 78);
-    ctx.fillStyle = mix('#e4edf1', '#e7f6fc', coast);
-    ctx.fillRect(x, 78, 4, WORLD_H - 78);
-  }
-
   ctx.fillStyle = '#fff6d8';
   for (let py = -11; py <= 11; py += 1) {
     const half = Math.round(Math.sqrt(121 - py * py));
