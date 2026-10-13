@@ -71,6 +71,7 @@ function show(target: HTMLElement, lines: string[], note: string): void {
     paragraph.textContent = line;
     target.append(paragraph);
   }
+  if (!note) return;
   const noteLine = document.createElement('p');
   noteLine.className = 'visitor-note';
   noteLine.textContent = note;
@@ -80,11 +81,7 @@ function show(target: HTMLElement, lines: string[], note: string): void {
 export async function loadVisitors(target: HTMLElement): Promise<void> {
   try {
     const tally = await loadTally();
-    show(
-      target,
-      [people(tally.visitor), views(tally.visit)],
-      'Unique visitors are distinct IP addresses.',
-    );
+    show(target, [people(tally.visitor), views(tally.visit)], '');
     return;
   } catch {
     // The primary counter is blocked or down. Try the backup before giving up.

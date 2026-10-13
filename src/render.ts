@@ -164,7 +164,6 @@ export function renderPage(root: HTMLElement): void {
 
         <section id="map">
           <h2>Places</h2>
-          <p>Cities I have visited. Rest the pointer on a red dot to see the name. The count below is how many people have opened this page.</p>
           <div class="map-frame">
             <img src="${esc(base)}assets/world.svg" alt="World map of cities visited" width="960" height="480" />
             <div class="pins">${pins}</div>
