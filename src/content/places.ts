@@ -24,6 +24,7 @@ export const places: Place[] = [
   { id: 'orlando', name: 'Orlando', lat: 28.5383, lng: -81.3792 },
   { id: 'washington-dc', name: 'Washington, D.C.', lat: 38.9072, lng: -77.0369 },
   { id: 'columbus', name: 'Columbus', lat: 39.9612, lng: -82.9988 },
+  { id: 'pittsburgh', name: 'Pittsburgh', lat: 40.4406, lng: -79.9959 },
   { id: 'tokyo', name: 'Tokyo', lat: 35.6762, lng: 139.6503 },
   { id: 'kamakura', name: 'Kamakura', lat: 35.3192, lng: 139.5467 },
 ];
