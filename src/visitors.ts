@@ -63,7 +63,7 @@ function views(count: number): string {
   return count === 1 ? '1 page view.' : `${count.toLocaleString('en-US')} page views.`;
 }
 
-function show(target: HTMLElement, lines: string[], note: string): void {
+function show(target: HTMLElement, lines: string[]): void {
   target.replaceChildren();
   for (const [index, line] of lines.entries()) {
     const paragraph = document.createElement('p');
@@ -71,17 +71,12 @@ function show(target: HTMLElement, lines: string[], note: string): void {
     paragraph.textContent = line;
     target.append(paragraph);
   }
-  if (!note) return;
-  const noteLine = document.createElement('p');
-  noteLine.className = 'visitor-note';
-  noteLine.textContent = note;
-  target.append(noteLine);
 }
 
 export async function loadVisitors(target: HTMLElement): Promise<void> {
   try {
     const tally = await loadTally();
-    show(target, [people(tally.visitor), views(tally.visit)], '');
+    show(target, [people(tally.visitor), views(tally.visit)]);
     return;
   } catch {
     // The primary counter is blocked or down. Try the backup before giving up.
@@ -89,7 +84,7 @@ export async function loadVisitors(target: HTMLElement): Promise<void> {
 
   try {
     const pageViews = await loadAbacus();
-    show(target, [views(pageViews)], 'Page views are counted when the primary counter cannot be reached.');
+    show(target, [views(pageViews)]);
   } catch {
     target.replaceChildren();
     const message = document.createElement('p');
